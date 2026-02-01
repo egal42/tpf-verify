@@ -9,8 +9,30 @@
 <body>
   <h1>The Pioneer Forest – Verification</h1>
   <p>Status: <strong>Online</strong></p>
-  <p>This page will verify a card file by serial + SHA-256 hash.</p>
-  <p>Manifest: <a href="manifest.json">manifest.json</a></p>
+
+  <hr>
+
+  <label>
+    Serial ID<br>
+    <input id="serial" type="text" placeholder="TPF-TEST-01" style="width: 320px;">
+  </label>
+
+  <br><br>
+
+  <label>
+    Upload a test file (PNG/PDF/etc.)<br>
+    <input id="file" type="file">
+  </label>
+
+  <br><br>
+
+  <button id="verifyBtn">Verify</button>
+
+  <pre id="result" style="margin-top:16px; padding:12px; border:1px solid #ccc; max-width:900px; white-space:pre-wrap;"></pre>
+
+  <hr>
+
+  <p>Manifest: <a href="manifest.json" target="_blank">manifest.json</a></p>
 
   <script src="assets/verify.js"></script>
 </body>
