@@ -10,7 +10,7 @@
   if (statusMsgEl) statusMsgEl.textContent = "Checking system…";
 
   try {
-    const res = await fetch("/manifest.json", { cache: "no-store" });
+    const res = await fetch("manifest.json", { cache: "no-store" });
     if (!res.ok) throw new Error("Manifest not reachable");
 
     // Online
@@ -39,8 +39,8 @@ button.addEventListener("click", async () => {
   const serial = document.getElementById("serial").value.trim();
   const fileInput = document.getElementById("file");
 
-  if (!serial) return out("❌ Please enter a serial ID.");
-  if (!fileInput.files.length) return out("❌ Please upload a file.");
+  if (!serial) return out("❌ INVALID\nReason: Missing serial ID.");
+  if (!fileInput.files.length) return out("❌ INVALID\nReason: No file uploaded.");
 
   try {
     const file = fileInput.files[0];
@@ -52,7 +52,7 @@ button.addEventListener("click", async () => {
     const hashHex = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
 
     // Load manifest (no cache so updates show immediately)
-    const res = await fetch("/manifest.json", { cache: "no-store" });
+    const res = await fetch("manifest.json", { cache: "no-store" });
     if (!res.ok) throw new Error("Manifest not reachable");
 
     const manifest = await res.json();
@@ -60,13 +60,13 @@ button.addEventListener("click", async () => {
 
     if (!match) {
       return out(
-        `❌ Serial not found.\n\nEntered: ${serial}\n\nComputed SHA-256:\n${hashHex}`
+        `❌ INVALID\nReason: Serial not found.\n\nEntered: ${serial}\n\nComputed SHA-256:\n${hashHex}`
       );
     }
 
     if ((match.sha256 || "").toLowerCase() !== hashHex.toLowerCase()) {
       return out(
-        `❌ Hash mismatch.\n\nExpected:\n${match.sha256}\n\nGot:\n${hashHex}`
+        `❌ INVALID\nReason: Hash mismatch.\n\nExpected:\n${match.sha256}\n\nGot:\n${hashHex}`
       );
     }
 
@@ -75,6 +75,6 @@ button.addEventListener("click", async () => {
     );
 
   } catch (e) {
-    return out("❌ Error:\n" + (e?.message || e));
+    return out("❌ INVALID\nReason: Error.\n\n" + (e?.message || e));
   }
 });
