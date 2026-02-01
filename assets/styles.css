@@ -1,0 +1,9 @@
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  margin: 24px;
+  line-height: 1.45;
+}
+
+a {
+  color: inherit;
+}
