@@ -1,20 +1,27 @@
 // ===== System status check =====
 (async function checkStatus() {
   const statusEl = document.getElementById("status");
+  const statusMsgEl = document.getElementById("statusMsg");
   if (!statusEl) return;
 
+  // Initial state
   statusEl.textContent = "Checking…";
   statusEl.style.color = "gray";
+  if (statusMsgEl) statusMsgEl.textContent = "Checking system…";
 
   try {
     const res = await fetch("/manifest.json", { cache: "no-store" });
     if (!res.ok) throw new Error("Manifest not reachable");
 
+    // Online
     statusEl.textContent = "Online";
     statusEl.style.color = "green";
+    if (statusMsgEl) statusMsgEl.textContent = "The verification system is ready and operational.";
   } catch (e) {
+    // Offline
     statusEl.textContent = "Offline";
     statusEl.style.color = "red";
+    if (statusMsgEl) statusMsgEl.textContent = "Verification is temporarily unavailable. Please try again later.";
   }
 })();
 
@@ -46,8 +53,9 @@ button.addEventListener("click", async () => {
 
     // Load manifest (no cache so updates show immediately)
     const res = await fetch("/manifest.json", { cache: "no-store" });
-    const manifest = await res.json();
+    if (!res.ok) throw new Error("Manifest not reachable");
 
+    const manifest = await res.json();
     const match = (manifest.shares || []).find(s => s.serial === serial);
 
     if (!match) {
