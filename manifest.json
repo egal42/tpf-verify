@@ -6,5 +6,12 @@
   "co2_per_share_kg": 30,
   "issued_date": "2025-10-06",
   "tree_nation_proof": "https://tree-nation.com/trees/8217897/view",
-  "shares": []
+  "shares": [
+  {
+    "serial": "TPF-TEST-01",
+    "share_no": 1,
+    "co2_kg": 30,
+    "sha256": "PUT_HASH_HERE"
+  }
+]
 }
