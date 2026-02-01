@@ -1,5 +1,4 @@
 // ===== System status check =====
-alert("verify.js loaded");
 (async function checkStatus() {
   const statusEl = document.getElementById("status");
   if (!statusEl) return;
@@ -8,7 +7,7 @@ alert("verify.js loaded");
   statusEl.style.color = "gray";
 
   try {
-    const res = await fetch("manifest.json", { cache: "no-store" });
+    const res = await fetch("/manifest.json", { cache: "no-store" });
     if (!res.ok) throw new Error("Manifest not reachable");
 
     statusEl.textContent = "Online";
@@ -46,7 +45,7 @@ button.addEventListener("click", async () => {
     const hashHex = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
 
     // Load manifest (no cache so updates show immediately)
-    const res = await fetch("manifest.json", { cache: "no-store" });
+    const res = await fetch("/manifest.json", { cache: "no-store" });
     const manifest = await res.json();
 
     const match = (manifest.shares || []).find(s => s.serial === serial);
@@ -58,3 +57,16 @@ button.addEventListener("click", async () => {
     }
 
     if ((match.sha256 || "").toLowerCase() !== hashHex.toLowerCase()) {
+      return out(
+        `❌ Hash mismatch.\n\nExpected:\n${match.sha256}\n\nGot:\n${hashHex}`
+      );
+    }
+
+    return out(
+      `✅ VALID\n\nSerial: ${match.serial}\nShare: ${match.share_no}/${manifest.shares_total}\nCO₂ share: ${match.co2_kg} kg\n\nSHA-256:\n${hashHex}`
+    );
+
+  } catch (e) {
+    return out("❌ Error:\n" + (e?.message || e));
+  }
+});
