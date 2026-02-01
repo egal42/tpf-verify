@@ -1,3 +1,24 @@
+// ===== System status check =====
+(async function checkStatus() {
+  const statusEl = document.getElementById("status");
+  if (!statusEl) return;
+
+  statusEl.textContent = "Checking…";
+  statusEl.style.color = "gray";
+
+  try {
+    const res = await fetch("manifest.json", { cache: "no-store" });
+    if (!res.ok) throw new Error("Manifest not reachable");
+
+    statusEl.textContent = "Online";
+    statusEl.style.color = "green";
+  } catch (e) {
+    statusEl.textContent = "Offline";
+    statusEl.style.color = "red";
+  }
+})();
+
+// ===== Verification logic =====
 const resultEl = document.getElementById("result");
 const button = document.getElementById("verifyBtn");
 
@@ -36,16 +57,3 @@ button.addEventListener("click", async () => {
     }
 
     if ((match.sha256 || "").toLowerCase() !== hashHex.toLowerCase()) {
-      return out(
-        `❌ Hash mismatch.\n\nExpected:\n${match.sha256}\n\nGot:\n${hashHex}`
-      );
-    }
-
-    return out(
-      `✅ VALID\n\nSerial: ${match.serial}\nShare: ${match.share_no}/${manifest.shares_total}\nCO₂ share: ${match.co2_kg} kg\n\nSHA-256:\n${hashHex}`
-    );
-
-  } catch (e) {
-    return out("❌ Error:\n" + (e?.message || e));
-  }
-});
