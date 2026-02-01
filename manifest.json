@@ -7,11 +7,11 @@
   "issued_date": "2025-10-06",
   "tree_nation_proof": "https://tree-nation.com/trees/8217897/view",
   "shares": [
-  {
-    "serial": "TPF-TEST-01",
-    "share_no": 1,
-    "co2_kg": 30,
-    "sha256": "F70C69A4CC4E7BE317DB7FEEBCDA3A1D5D1655DB62A575622AD8CCFF500698F6"
-  }
-]
+    {
+      "serial": "TPF-TEST-01",
+      "share_no": 1,
+      "co2_kg": 30,
+      "sha256": "f70c69a4cc4e7be317db7feebcda3a1d5d1655db62a575622ad8ccff500698f6"
+    }
+  ]
 }
