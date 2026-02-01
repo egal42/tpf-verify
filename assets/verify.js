@@ -81,4 +81,17 @@ button.addEventListener("click", async () => {
 
     if ((match.sha256 || "").toLowerCase() !== hashHex.toLowerCase()) {
       return out(
-        `❌ INVALID\nReason: Hash mismatch.\n\nExpected:\n${ma
+        `❌ INVALID\nReason: Hash mismatch.\n\nExpected:\n${match.sha256}\n\nGot:\n${hashHex}`
+      );
+    }
+
+    return out(
+      `✅ VALID\n\nSerial: ${match.serial}\nShare: ${match.share_no}/${manifest.shares_total}\nCO₂ share: ${match.co2_kg} kg\n\nSHA-256:\n${hashHex}`
+    );
+
+  } catch (e) {
+    return out(
+      "❌ INVALID\nReason: Error.\n\n" + (e?.message || e)
+    );
+  }
+});
