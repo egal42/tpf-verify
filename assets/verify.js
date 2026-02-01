@@ -1,4 +1,5 @@
 // ===== System status check =====
+alert("verify.js loaded");
 (async function checkStatus() {
   const statusEl = document.getElementById("status");
   if (!statusEl) return;
