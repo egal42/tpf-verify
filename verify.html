@@ -3,61 +3,82 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>TPF Verify</title>
+  <title>TPF Verify v1 — The Pioneer Forest</title>
   <link rel="stylesheet" href="assets/styles.css" />
 </head>
+
 <body>
+  <main class="wrap">
 
-  <h1>The Pioneer Forest – Verification</h1>
+    <!-- Header -->
+    <header class="header">
+      <div class="brand">
+        <img src="assets/tpf-logo.png" alt="The Pioneer Forest logo" class="logo" />
+        <div>
+          <div class="brand-title">The Pioneer Forest</div>
+          <div class="brand-subtitle">TPF Verify v1</div>
+        </div>
+      </div>
 
-  <p>
-    Status:
-    <strong id="status" style="color: gray;">Checking…</strong><br>
-    <small id="statusMsg">Checking system…</small>
-  </p>
+      <div class="status">
+        <div class="status-label">Status</div>
+        <!-- MUST keep these IDs for verify.js -->
+        <span id="status" class="status-chip status-chip--neutral">Idle</span>
+        <div id="statusMsg" class="status-msg">Please select a file.</div>
+      </div>
+    </header>
 
-  <p>
-    This page verifies the authenticity and environmental backing of The Pioneer Forest digital packs.
-    Enter the serial ID and upload your file to confirm inclusion in the declared CO₂ offset batch.
-  </p>
+    <!-- Main Card -->
+    <section class="card">
+      <h2 class="h1">Verification</h2>
 
-  <hr>
+      <p class="lead">
+        Upload a file to check whether it matches a published TPF reference using a SHA-256 hash comparison against
+        <code>manifest.json</code>.
+      </p>
 
-  <label>
-    Serial ID<br>
-    <input id="serial" type="text" placeholder="TPF-TEST-01" style="width: 320px;">
-  </label>
+      <p class="note">
+        This page verifies <strong>file integrity only</strong>.
+        It does not verify ownership, transactions, or environmental claims.
+      </p>
 
-  <br><br>
+      <div class="form">
+        <span class="label">File</span>
 
-  <label>
-    Upload your file (PDF/PNG/etc.)<br>
-    <input id="file" type="file">
-  </label>
+        <!-- MUST keep id="file" -->
+        <input id="file" class="file" type="file" accept=".pdf,application/pdf" />
 
-  <br><br>
+        <!-- MUST keep id="verifyBtn" -->
+        <button id="verifyBtn" class="btn" type="button">Verify</button>
+      </div>
 
-  <button id="verifyBtn">Verify</button>
+      <div class="result-wrap">
+        <div class="result-title">Result</div>
 
-  <pre id="result"
-       style="margin-top:16px; padding:12px; border:1px solid #ccc;
-              max-width:900px; white-space:pre-wrap;"></pre>
+        <!-- MUST keep id="result" -->
+        <pre id="result" class="result result--neutral">No file selected.</pre>
+      </div>
+    </section>
 
-  <hr>
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="links">
+        <span class="muted">Manifest:</span>
+        <a href="manifest.json" target="_blank" rel="noopener">manifest.json</a>
+      </div>
 
-  <p>
-    Manifest:
-    <a href="manifest.json" target="_blank">manifest.json</a>
-  </p>
+      <div class="links">
+        <a href="https://egal42.duckdns.org/forest/forest.html" target="_blank" rel="noopener">
+          ← Home · The Pioneer Forest
+        </a>
+      </div>
 
-  <p style="margin-top: 8px;">
-    <a href="https://egal42.duckdns.org/forest/forest.html"
-       target="_blank" rel="noopener">
-       ← Back to The Pioneer Forest
-    </a>
-  </p>
+      <div class="scope">TPF Verify v1 — SHA-256 file integrity check only.</div>
+    </footer>
 
+  </main>
+
+  <!-- keep your repo versioning to avoid cache issues -->
   <script src="assets/verify.js?v=1"></script>
-
 </body>
 </html>
