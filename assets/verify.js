@@ -1,97 +1,152 @@
-// ===== System status check =====
-(async function checkStatus() {
-  const statusEl = document.getElementById("status");
-  const statusMsgEl = document.getElementById("statusMsg");
-  if (!statusEl) return;
+// assets/verify.js
+// TPF Verify v1 — file hash verification only
 
-  // Initial state
-  statusEl.textContent = "Checking…";
-  statusEl.style.color = "gray";
-  if (statusMsgEl) statusMsgEl.textContent = "Checking system…";
-
-  try {
-    const res = await fetch("/manifest.json", { cache: "no-store" });
-    if (!res.ok) throw new Error("Manifest not reachable");
-
-    // Online
-    statusEl.textContent = "Online";
-    statusEl.style.color = "green";
-    if (statusMsgEl) {
-      statusMsgEl.textContent =
-        "The verification system is ready and operational.";
-    }
-  } catch (e) {
-    // Offline
-    statusEl.textContent = "Offline";
-    statusEl.style.color = "red";
-    if (statusMsgEl) {
-      statusMsgEl.textContent =
-        "Verification is temporarily unavailable. Please try again later.";
-    }
-  }
-})();
-
-// ===== Verification logic =====
+const statusEl = document.getElementById("status");
+const statusMsgEl = document.getElementById("statusMsg");
+const serialEl = document.getElementById("serial");
+const fileEl = document.getElementById("file");
+const verifyBtn = document.getElementById("verifyBtn");
 const resultEl = document.getElementById("result");
-const button = document.getElementById("verifyBtn");
 
-function out(txt) {
-  resultEl.textContent = txt;
+function setStatus(text, color, msg) {
+  statusEl.textContent = text;
+  statusEl.style.color = color;
+  statusMsgEl.textContent = msg || "";
 }
 
-button.addEventListener("click", async () => {
-  out("Verifying…");
+// Compute SHA-256 (hex, lowercase)
+async function sha256Hex(file) {
+  const buffer = await file.arrayBuffer();
+  const hashBuffer = await crypto.subtle.digest("SHA-256", buffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+}
 
-  const serial = document.getElementById("serial").value.trim();
-  const fileInput = document.getElementById("file");
-
-  if (!serial) {
-    return out("❌ INVALID\nReason: Missing serial ID.");
+// Load and validate Verify v1 manifest
+async function loadManifestV1() {
+  const res = await fetch("manifest.json", { cache: "no-store" });
+  if (!res.ok) {
+    throw new Error(`Manifest load failed (${res.status})`);
   }
 
-  if (!fileInput.files.length) {
-    return out("❌ INVALID\nReason: No file uploaded.");
+  const data = await res.json();
+
+  if (
+    !data ||
+    data.verify_version !== "v1" ||
+    !Array.isArray(data.items)
+  ) {
+    throw new Error(
+      "Unsupported manifest schema. Expected verify_version:v1 with items[]."
+    );
   }
+
+  return data.items.map(item => ({
+    item_id: item.item_id || "",
+    item_name: item.item_name || "",
+    sha256: String(item.sha256 || "").toLowerCase().trim(),
+    notes: item.notes || ""
+  }));
+}
+
+function formatValidResult(hit, fileHash, serial) {
+  const lines = [
+    "✅ VALID",
+    "",
+    `Item: ${hit.item_name || "(unnamed item)"}`,
+    `ID:   ${hit.item_id || "(no id)"}`
+  ];
+
+  if (hit.notes) {
+    lines.push(`Notes: ${hit.notes}`);
+  }
+
+  lines.push("");
+  lines.push("SHA-256:");
+  lines.push(fileHash);
+
+  if (serial) {
+    lines.push("");
+    lines.push(`(Serial entered: ${serial} — not verified in v1)`);
+  }
+
+  return lines.join("\n");
+}
+
+function formatInvalidResult(fileHash, serial) {
+  const lines = [
+    "❌ INVALID",
+    "",
+    "File hash not found in manifest.json.",
+    "",
+    "SHA-256:",
+    fileHash
+  ];
+
+  if (serial) {
+    lines.push("");
+    lines.push(`(Serial entered: ${serial} — not verified in v1)`);
+  }
+
+  return lines.join("\n");
+}
+
+// Main verification handler
+verifyBtn.addEventListener("click", async () => {
+  resultEl.textContent = "";
+  setStatus("Checking…", "gray", "Computing hash and comparing to manifest…");
 
   try {
-    const file = fileInput.files[0];
-    const buffer = await file.arrayBuffer();
-
-    // Compute SHA-256
-    const hashBuffer = await crypto.subtle.digest("SHA-256", buffer);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hashHex = hashArray
-      .map(b => b.toString(16).padStart(2, "0"))
-      .join("");
-
-    // Load manifest (root-based, known working)
-    const res = await fetch("/manifest.json", { cache: "no-store" });
-    if (!res.ok) throw new Error("Manifest not reachable");
-
-    const manifest = await res.json();
-    const match = (manifest.shares || []).find(
-      s => s.serial === serial
-    );
-
-    if (!match) {
-      return out(
-        `❌ INVALID\nReason: Serial not found.\n\nEntered:\n${serial}\n\nComputed SHA-256:\n${hashHex}`
-      );
+    const file = fileEl.files && fileEl.files[0];
+    if (!file) {
+      setStatus("Idle", "gray", "Please select a file.");
+      resultEl.textContent = "⚠ No file selected.";
+      return;
     }
 
-    if ((match.sha256 || "").toLowerCase() !== hashHex.toLowerCase()) {
-      return out(
-        `❌ INVALID\nReason: Hash mismatch.\n\nExpected:\n${match.sha256}\n\nGot:\n${hashHex}`
+    const serial = (serialEl.value || "").trim();
+
+    const fileHash = (await sha256Hex(file)).toLowerCase();
+    const items = await loadManifestV1();
+
+    const hit = items.find(it => it.sha256 === fileHash);
+
+    if (hit) {
+      setStatus(
+        "Valid",
+        "green",
+        "File hash matches a published TPF reference."
       );
+      resultEl.textContent = formatValidResult(hit, fileHash, serial);
+    } else {
+      setStatus(
+        "Invalid",
+        "crimson",
+        "File hash not found in Verify v1 manifest."
+      );
+      resultEl.textContent = formatInvalidResult(fileHash, serial);
     }
-
-    return out(
-      `✅ VALID\n\nSerial: ${match.serial}\nShare: ${match.share_no}/${manifest.shares_total}\nCO₂ share: ${match.co2_kg} kg\n\nSHA-256:\n${hashHex}`
-    );
-
-  } catch (e) {
-    return out(
-      "❌ INVALID\nReason: Error.\n\n" + (e?.message || e)
-    );
+  } catch (err) {
+    setStatus("Error", "crimson", "Verification failed.");
+    resultEl.textContent =
+      "❌ ERROR\n\n" + (err && err.message ? err.message : String(err));
   }
 });
+
+// Initial system check
+(function init() {
+  if (!window.crypto || !crypto.subtle) {
+    setStatus(
+      "Error",
+      "crimson",
+      "Your browser does not support SHA-256 (crypto.subtle)."
+    );
+    return;
+  }
+
+  setStatus(
+    "Ready",
+    "green",
+    "Upload a file to verify it against manifest.json."
+  );
+})();
