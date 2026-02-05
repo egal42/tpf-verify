@@ -1,0 +1,11 @@
+{
+  "verify_version": "v1",
+  "items": [
+    {
+      "item_id": "TPF-CO2-001",
+      "item_name": "Elowen — First Edition",
+      "sha256": "01c7179681cf555d316c0291bc6b4ebd234b7084a22bc99ea80e3c2013960bff",
+      "notes": "canonical First Edition PDF"
+    }
+  ]
+}
