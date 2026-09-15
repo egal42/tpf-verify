@@ -6,6 +6,12 @@
       "item_name": "Elowen — First Edition",
       "sha256": "01c7179681cf555d316c0291bc6b4ebd234b7084a22bc99ea80e3c2013960bff",
       "notes": "canonical First Edition PDF"
+    },
+    {
+      "item_id": "TPF-ART-001",
+      "item_name": "Art & Nature — First Edition",
+      "sha256": "1ca3b4f464aa58bd652658ef8b3ef2218f5d16c5216b2a7da5088d0acc815ca3",
+      "notes": "canonical First Edition PDF"
     }
   ]
 }
