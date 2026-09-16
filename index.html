@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TPF Verify v1 — The Pioneer Forest</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+
+<body>
+  <main class="wrap">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="brand">
+        <img src="assets/tpf-logo.png" alt="The Pioneer Forest logo" class="logo" />
+        <div>
+          <div class="brand-title">The Pioneer Forest</div>
+          <div class="brand-subtitle">TPF Verify v1</div>
+        </div>
+      </div>
+
+      <div class="status">
+        <div class="status-label">Status</div>
+        <!-- MUST keep these IDs for verify.js -->
+        <span id="status" class="status-chip status-chip--neutral">Idle</span>
+        <div id="statusMsg" class="status-msg">Please select a file.</div>
+      </div>
+    </header>
+
+    <!-- Main Card -->
+    <section class="card">
+      <h2 class="h1">Verification</h2>
+
+      <p class="lead">
+        Upload a file to check whether it matches a published TPF reference using a SHA-256 hash comparison against
+        <code>manifest.json</code>.
+      </p>
+
+      <p class="note">
+        This page verifies <strong>file integrity only</strong>.
+        It does not verify ownership, transactions, or environmental claims.
+      </p>
+
+      <div class="form">
+        <span class="label">File</span>
+
+        <!-- MUST keep id="file" -->
+        <input id="file" class="file" type="file" accept=".pdf,application/pdf" />
+
+        <!-- MUST keep id="verifyBtn" -->
+        <button id="verifyBtn" class="btn" type="button">Verify</button>
+      </div>
+
+      <div class="result-wrap">
+        <div class="result-title">Result</div>
+
+        <!-- MUST keep id="result" -->
+        <pre id="result" class="result result--neutral">No file selected.</pre>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="links">
+        <span class="muted">Manifest:</span>
+        <a href="manifest.json" target="_blank" rel="noopener">manifest.json</a>
+      </div>
+
+      <div class="links">
+        <a href="https://egal42.duckdns.org/forest/forest.html" target="_blank" rel="noopener">
+          ← Home · The Pioneer Forest
+        </a>
+      </div>
+
+      <div class="scope">TPF Verify v1 — SHA-256 file integrity check only.</div>
+    </footer>
+
+  </main>
+
+  <!-- keep your repo versioning to avoid cache issues -->
+  <script src="assets/verify.js?v=1"></script>
+</body>
+</html>
