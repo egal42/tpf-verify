@@ -18,6 +18,12 @@
       "item_name": "TPF Roots — 1 Pi CO₂ Offset Pack",
       "sha256": "189333c7fc356a95bf47219cff4b4d0d7a708d9ccc9785e0553a8efd42de9eb7",
       "notes": "canonical 1 Pi TPF Roots Offset Pack PDF"
+    },
+    {
+      "item_id": "TPF-ROOTS-002",
+      "item_name": "TPF Roots — 2 Pi CO₂ Offset Pack",
+      "sha256": "00da6c29582b6060b7de84c0162f7625ab5c6579abb0a7000dc3a8deb24d619e",
+      "notes": "canonical 2 Pi TPF Roots Offset Pack PDF"
     }
   ]
 }
